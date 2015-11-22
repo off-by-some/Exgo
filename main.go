@@ -8,10 +8,6 @@ import (
 )
 
 func main() {
-    // Set up routes/handlers
-    for route, handler := range resources.RoutesMap {
-      resources.Router.HandleFunc(route, handler)
-    }
 
     if (redis.ConnectionFailed == nil)  {
       println("Connected to redis")
@@ -26,7 +22,7 @@ func main() {
     }
 
     // Start the server
-    defer http.ListenAndServe(":8080", resources.Router)
+    defer http.ListenAndServe(":8080", resources.NewRouter())
     println("Listening at :8080")
 
 }

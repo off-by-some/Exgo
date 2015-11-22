@@ -1,16 +1,41 @@
 package resources
 
 import (
-  http "net/http"
-  mux "github.com/gorilla/mux"
-  sessionResource "Exgo/resources/session"
+    "net/http"
+    "github.com/gorilla/mux"
+    sessionResource "Exgo/resources/session"
 )
 
-var Router = mux.NewRouter()
+type Route struct {
+    Name        string
+    Method      string
+    Pattern     string
+    HandlerFunc http.HandlerFunc
+}
 
-type HandlerFunc func(res http.ResponseWriter, req *http.Request)
-var RoutesMap = map[string]HandlerFunc {
-  "/session": sessionResource.HandleLogin,
+type Routes []Route
+
+func NewRouter() *mux.Router {
+
+    router := mux.NewRouter().StrictSlash(true)
+    for _, route := range routes {
+        router.
+            Methods(route.Method).
+            Path(route.Pattern).
+            Name(route.Name).
+            Handler(route.HandlerFunc)
+    }
+
+    return router
+}
+
+var routes = Routes{
+    Route{
+        "CreateUser",
+        "POST",
+        "/user",
+        sessionResource.Create,
+    },
 }
 
 
