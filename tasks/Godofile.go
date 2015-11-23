@@ -14,6 +14,10 @@ func tasks(p *Project) {
         return Run("gopm get", In{"."})
     })
 
+    p.Task("the-thing", D{} , func() error {
+        return Run("gopm build", In{"."})
+    })
+
     p.Task("build", D{"run"}, func() error {
         return Run("gopm build", In{"."})
     }).Watch("**/*.go")
