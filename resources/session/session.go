@@ -18,7 +18,7 @@ func hashPass(password string) ([]byte, int, []byte) {
   salt := make([]byte, 32)
   rand.Read(salt)
   ii, _ := rand.Int(rand.Reader, big.NewInt(16000))
-  iterations := int(ii.Int64())
+  iterations := int(ii.Int64()) + 64000
   hash := pbkdf2.Key([]byte(password), salt, iterations, 32, sha256.New)
   return salt, iterations, hash
 }
