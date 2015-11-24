@@ -10,6 +10,8 @@ import (
   pbkdf2 "golang.org/x/crypto/pbkdf2"
   sha256 "crypto/sha256"
   "bytes"
+  "fmt"
+  hex "encoding/hex"
 )
 
 // FIXME: If the rand stuff in here fails, it
@@ -21,17 +23,42 @@ func hashPass(password string) ([]byte, int, []byte) {
   ii, _ := rand.Int(rand.Reader, big.NewInt(16000))
   iterations := int(ii.Int64()) + 64000
   hash := pbkdf2.Key([]byte(password), salt, iterations, 32, sha256.New)
+  fmt.Printf("vals are:  %v, %d, %v, \n", salt, iterations, hash)
   return salt, iterations, hash
 }
 
 func createUser(username string, email string, password string, name string) *sql.Rows {
   passwordSalt, passwordIterations, passwordHash := hashPass(password)
-  rows, _ := sq.
+  rows, err := sq.
     Insert("user").
     Columns("username", "email", "password_salt", "password_iterations", "password_hash", "name").
-    Values(username, email, passwordSalt, passwordIterations, passwordHash, name).
+    Values(
+      username, email,
+      sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordSalt)),
+      passwordIterations,
+      sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordHash)),
+      name).
     RunWith(db.Client).
     Query()
+
+  statement := sq.
+    Insert("user").
+    Columns("username", "email", "password_salt", "password_iterations", "password_hash", "name").
+    Values(
+      username, email,
+      sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordSalt)),
+      passwordIterations,
+      sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordHash)),
+      name)
+
+  sql, args, _ := statement.ToSql()
+
+  fmt.Printf("bytes are %v\n", hex.EncodeToString(passwordSalt))
+
+  fmt.Printf("Statement is: %v\n", sql)
+  fmt.Printf("Args is: %v\n", args)
+
+  fmt.Printf("just chillin' here... %v \n", err)
 
   defer rows.Close()
 
