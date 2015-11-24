@@ -5,6 +5,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE "user" (
     id uuid NOT NULL,
+
+    -- FIXME: Unique constraint on one of these?
     username text,
     email text,
 
