@@ -52,6 +52,7 @@ func verifyHash(password string, salt []byte, iterations int, hash []byte) bool 
 // Really there should be a unique constraint
 // in the db on something we can use to grab
 // a user
+// TODO: Handle non-existant users
 func getUser(username string) (string, string, string, []byte, int, []byte, string) {
   var (
     id string
@@ -73,7 +74,24 @@ func getUser(username string) (string, string, string, []byte, int, []byte, stri
   return id, un, email, salt, int(iterations), hash, body
 }
 
+// TODO: Handle non-existant users
+func getUserAuthInfo(username string) ([]byte, int, []byte) {
+  var (
+    salt []byte
+    iterations int
+    hash []byte
+  )
+  rows, _ := sq.
+    Select("password_salt", "password_iterations", "password_hash").
+    From("user").
+    Where(sq.Eq{"username": username}).
+    RunWith(db.Client).
+    Query()
+  rows.Scan(&salt, &iterations, &hash)
+  return salt, iterations, hash
+}
+
 func auth(username string, password string) bool {
-  id, un, email, salt, iterations, hash, body := getUser(username)
+  salt, iterations, hash := getUserAuthInfo(username)
   return verifyHash(password, salt, iterations, hash)
 }
