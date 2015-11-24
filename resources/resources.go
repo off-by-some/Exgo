@@ -4,6 +4,7 @@ import (
     "net/http"
     "github.com/gorilla/mux"
     sessionResource "Exgo/resources/session"
+    L "Exgo/logger"
 )
 
 type Route struct {
@@ -19,11 +20,15 @@ func NewRouter() *mux.Router {
 
     router := mux.NewRouter().StrictSlash(true)
     for _, route := range routes {
-        router.
-            Methods(route.Method).
-            Path(route.Pattern).
-            Name(route.Name).
-            Handler(route.HandlerFunc)
+
+      // Set up logging for each request
+      handler := L.Logger(route.HandlerFunc, route.Name)
+
+      router.
+          Methods(route.Method).
+          Path(route.Pattern).
+          Name(route.Name).
+          Handler(handler)
     }
 
     return router
