@@ -22,7 +22,6 @@ func hashPass(password string) ([]byte, int, []byte) {
   ii, _ := rand.Int(rand.Reader, big.NewInt(16000))
   iterations := int(ii.Int64()) + 64000
   hash := pbkdf2.Key([]byte(password), salt, iterations, 32, sha256.New)
-  fmt.Printf("vals are:  %v, %d, %v, \n", salt, iterations, hash)
   return salt, iterations, hash
 }
 
@@ -30,7 +29,7 @@ func createUser(username string, email string, password string, name string) *sq
   passwordSalt, passwordIterations, passwordHash := hashPass(password)
   dsq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
   rows, err := dsq.
-    Insert("public.user").
+    Insert("\"user\"").
     Columns("username", "email", "password_salt", "password_iterations", "password_hash", "name").
     Values(
       username, email,
@@ -76,7 +75,7 @@ func getUser(username string) (string, string, string, []byte, int, []byte, stri
   dsq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
   rows, _ := dsq.
     Select("*").
-    From("user").
+    From("\"user\"").
     Where(sq.Eq{"username": username}).
     RunWith(db.Client).
     Query()
@@ -94,7 +93,7 @@ func getUserAuthInfo(username string) ([]byte, int, []byte) {
   dsq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
   rows, _ := dsq.
     Select("password_salt", "password_iterations", "password_hash").
-    From("user").
+    From("\"user\"").
     Where(sq.Eq{"username": username}).
     RunWith(db.Client).
     Query()

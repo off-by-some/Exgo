@@ -5,4 +5,4 @@ import (
   _ "github.com/lib/pq"
 )
 
-var Client, DatabaseConnFailed = sql.Open("postgres", "postgres://postgres@localhost/exgo?sslmode=disable")
+var Client, DatabaseConnFailed = sql.Open("postgres", "postgres://postgres:@localhost/exgo?sslmode=disable")
