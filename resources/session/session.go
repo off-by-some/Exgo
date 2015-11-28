@@ -73,8 +73,8 @@ func getUser(username string) (string, string, string, []byte, int, []byte, stri
     hash []byte
     body string
   )
-
-  rows, _ := sq.
+  dsq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+  rows, _ := dsq.
     Select("*").
     From("user").
     Where(sq.Eq{"username": username}).
@@ -91,7 +91,8 @@ func getUserAuthInfo(username string) ([]byte, int, []byte) {
     iterations int
     hash []byte
   )
-  rows, _ := sq.
+  dsq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+  rows, _ := dsq.
     Select("password_salt", "password_iterations", "password_hash").
     From("user").
     Where(sq.Eq{"username": username}).
