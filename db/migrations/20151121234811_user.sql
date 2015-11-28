@@ -4,11 +4,12 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE "user" (
-    id uuid NOT NULL,
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
 
     -- FIXME: Unique constraint on one of these?
     username text,
     email text,
+    name text,
 
     -- Our hash must be salty
     -- so we avoid lookup/rainbow table attacks
