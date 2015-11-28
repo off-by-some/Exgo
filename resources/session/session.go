@@ -31,30 +31,31 @@ func createUser(username string, email string, password string, name string) *sq
   passwordSalt, passwordIterations, passwordHash := hashPass(password)
   rows, err := sq.
     Insert("user").
-    Columns("username", "email", "password_salt", "password_iterations", "password_hash", "name").
+    Columns("username", "email", "name").
     Values(
       username, email,
-      sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordSalt)),
-      passwordIterations,
-      sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordHash)),
+      //sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordSalt)),
+      //passwordIterations,
+      //sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordHash)),
       name).
     RunWith(db.Client).
     Query()
 
   statement := sq.
     Insert("user").
-    Columns("username", "email", "password_salt", "password_iterations", "password_hash", "name").
+    Columns("username", "email", "name").
     Values(
       username, email,
-      sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordSalt)),
-      passwordIterations,
-      sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordHash)),
+      //sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordSalt)),
+      //passwordIterations,
+      //sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordHash)),
       name)
 
   sql, args, _ := statement.ToSql()
 
   fmt.Printf("bytes are %v\n", hex.EncodeToString(passwordSalt))
-
+  fmt.Printf("bytes are %v\n", hex.EncodeToString(passwordHash))
+  fmt.Printf("password iterations %v\n", passwordIterations)
   fmt.Printf("Statement is: %v\n", sql)
   fmt.Printf("Args is: %v\n", args)
 
