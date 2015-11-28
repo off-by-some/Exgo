@@ -13,16 +13,16 @@ CREATE TABLE "user" (
 
     -- Our hash must be salty
     -- so we avoid lookup/rainbow table attacks
-    -- password_salt bytea,
+    password_salt bytea,
     -- We're gonna use PBKDF2
     -- that way hashing is so computatianally intensive
     -- that dictionary attacks / brute-forcing is nearly
     -- impossible
     -- Varying the number of iterations by some random
     -- amount helps somehow
-    -- password_iterations integer,
+    password_iterations integer,
     -- Don't store the password, just the hash
-    -- password_hash bytea,
+    password_hash bytea,
 
     -- dafaq is body?
     body text,

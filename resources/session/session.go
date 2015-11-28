@@ -11,7 +11,6 @@ import (
   sha256 "crypto/sha256"
   "bytes"
   "fmt"
-  hex "encoding/hex"
 )
 
 // FIXME: If the rand stuff in here fails, it
@@ -29,37 +28,20 @@ func hashPass(password string) ([]byte, int, []byte) {
 
 func createUser(username string, email string, password string, name string) *sql.Rows {
   passwordSalt, passwordIterations, passwordHash := hashPass(password)
-  rows, err := sq.
-    Insert("user").
-    Columns("username", "email", "name").
+  dsq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
+  rows, err := dsq.
+    Insert("public.user").
+    Columns("username", "email", "password_salt", "password_iterations", "password_hash", "name").
     Values(
       username, email,
-      //sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordSalt)),
-      //passwordIterations,
-      //sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordHash)),
+      passwordSalt,
+      passwordIterations,
+      passwordHash,
       name).
     RunWith(db.Client).
     Query()
 
-  statement := sq.
-    Insert("user").
-    Columns("username", "email", "name").
-    Values(
-      username, email,
-      //sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordSalt)),
-      //passwordIterations,
-      //sq.Expr("decode(?, 'hex')", hex.EncodeToString(passwordHash)),
-      name)
-
-  sql, args, _ := statement.ToSql()
-
-  fmt.Printf("bytes are %v\n", hex.EncodeToString(passwordSalt))
-  fmt.Printf("bytes are %v\n", hex.EncodeToString(passwordHash))
-  fmt.Printf("password iterations %v\n", passwordIterations)
-  fmt.Printf("Statement is: %v\n", sql)
-  fmt.Printf("Args is: %v\n", args)
-
-  fmt.Printf("just chillin' here... %v \n", err)
+  fmt.Printf("err: %v \n", err)
 
   defer rows.Close()
 
