@@ -3,7 +3,6 @@ package session
 import (
   "database/sql"
   http "net/http"
-  sq "github.com/Masterminds/squirrel"
   db "Exgo/db"
   rand "crypto/rand"
   big "math/big"
@@ -11,6 +10,7 @@ import (
   sha256 "crypto/sha256"
   "bytes"
   "fmt"
+  sq "github.com/Masterminds/squirrel"
 )
 
 // FIXME: If the rand stuff in here fails, it
@@ -27,8 +27,7 @@ func hashPass(password string) ([]byte, int, []byte) {
 
 func createUser(username string, email string, password string, name string) *sql.Rows {
   passwordSalt, passwordIterations, passwordHash := hashPass(password)
-  dsq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-  rows, err := dsq.
+  rows, err := db.Sq.
     Insert("\"user\"").
     Columns("username", "email", "password_salt", "password_iterations", "password_hash", "name").
     Values(
@@ -37,7 +36,6 @@ func createUser(username string, email string, password string, name string) *sq
       passwordIterations,
       passwordHash,
       name).
-    RunWith(db.Client).
     Query()
 
   fmt.Printf("err: %v \n", err)
@@ -72,12 +70,10 @@ func getUser(username string) (string, string, string, []byte, int, []byte, stri
     hash []byte
     body string
   )
-  dsq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-  rows, _ := dsq.
+  rows, _ := db.Sq.
     Select("*").
     From("\"user\"").
     Where(sq.Eq{"username": username}).
-    RunWith(db.Client).
     Query()
   rows.Scan(&id, &un, &email, &salt, &iterations, &hash, &body)
   return id, un, email, salt, int(iterations), hash, body
@@ -90,12 +86,10 @@ func getUserAuthInfo(username string) ([]byte, int, []byte) {
     iterations int
     hash []byte
   )
-  dsq := sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
-  rows, _ := dsq.
+  rows, _ := db.Sq.
     Select("password_salt", "password_iterations", "password_hash").
     From("\"user\"").
     Where(sq.Eq{"username": username}).
-    RunWith(db.Client).
     Query()
   rows.Scan(&salt, &iterations, &hash)
   return salt, iterations, hash
