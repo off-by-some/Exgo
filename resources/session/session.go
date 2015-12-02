@@ -3,13 +3,14 @@ package session
 import (
   "database/sql"
   http "net/http"
-  sq "github.com/Masterminds/squirrel"
   db "Exgo/db"
   rand "crypto/rand"
   big "math/big"
   pbkdf2 "golang.org/x/crypto/pbkdf2"
   sha256 "crypto/sha256"
   "bytes"
+  "fmt"
+  sq "github.com/Masterminds/squirrel"
 )
 
 // FIXME: If the rand stuff in here fails, it
@@ -26,12 +27,18 @@ func hashPass(password string) ([]byte, int, []byte) {
 
 func createUser(username string, email string, password string, name string) *sql.Rows {
   passwordSalt, passwordIterations, passwordHash := hashPass(password)
-  rows, _ := sq.
-    Insert("user").
+  rows, err := db.Sq.
+    Insert("\"user\"").
     Columns("username", "email", "password_salt", "password_iterations", "password_hash", "name").
-    Values(username, email, passwordSalt, passwordIterations, passwordHash, name).
-    RunWith(db.Client).
+    Values(
+      username, email,
+      passwordSalt,
+      passwordIterations,
+      passwordHash,
+      name).
     Query()
+
+  fmt.Printf("err: %v \n", err)
 
   defer rows.Close()
 
@@ -63,12 +70,10 @@ func getUser(username string) (string, string, string, []byte, int, []byte, stri
     hash []byte
     body string
   )
-
-  rows, _ := sq.
+  rows, _ := db.Sq.
     Select("*").
-    From("user").
+    From("\"user\"").
     Where(sq.Eq{"username": username}).
-    RunWith(db.Client).
     Query()
   rows.Scan(&id, &un, &email, &salt, &iterations, &hash, &body)
   return id, un, email, salt, int(iterations), hash, body
@@ -81,11 +86,10 @@ func getUserAuthInfo(username string) ([]byte, int, []byte) {
     iterations int
     hash []byte
   )
-  rows, _ := sq.
+  rows, _ := db.Sq.
     Select("password_salt", "password_iterations", "password_hash").
-    From("user").
+    From("\"user\"").
     Where(sq.Eq{"username": username}).
-    RunWith(db.Client).
     Query()
   rows.Scan(&salt, &iterations, &hash)
   return salt, iterations, hash
