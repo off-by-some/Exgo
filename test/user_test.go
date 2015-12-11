@@ -1,4 +1,4 @@
-package setup_test
+package user_test
 
 // https://labix.org/gocheck
 // https://golang.org/doc/code.html#Testing

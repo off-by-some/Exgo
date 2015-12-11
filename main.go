@@ -6,6 +6,7 @@ import (
   redis  "Exgo/redis"
   http   "net/http"
   resources "Exgo/resources"
+  config "Exgo/config"
 )
 
 func main() {
@@ -15,6 +16,8 @@ func main() {
     } else {
       panic(redis.ConnectionFailed)
     }
+
+    println(config.File.GetString("example"))
 
     if (db.DatabaseConnFailed == nil)  {
       println("Connected to postgres")
