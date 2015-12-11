@@ -21,6 +21,8 @@ _cgo_export.*
 _testmain.go
 output
 
+config/local.yml
+
 *.exe
 *.test
 *.prof
