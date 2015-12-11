@@ -1,12 +1,25 @@
 package redis
 
 import redis "gopkg.in/redis.v3"
+import "Exgo/config"
+import "fmt"
 
-// TODO: Figure out a config setup
-var Client = redis.NewClient(&redis.Options{
-    Addr:     "localhost:6379",
-    Password: "",
-    DB:       0,
-})
+var Client *redis.Client
+func init() {
+  info := config.File.GetStringMap("redis")
+  port := config.File.GetInt("redis.port")
+  database := config.File.GetInt("redis.database")
+  Client = redis.NewClient(&redis.Options{
+      Addr:     fmt.Sprintf("%s:%d", info["host"].(string), port),
+      Password: "",
+      DB:       int64(database),
+  })
 
-var response, ConnectionFailed = Client.Ping().Result()
+  var _, err = Client.Ping().Result()
+
+  if (err != nil) {
+    panic(err)
+  }
+
+  println("Connected to Redis at port " + fmt.Sprintf("%d", port))
+}
