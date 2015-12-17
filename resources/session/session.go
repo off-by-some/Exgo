@@ -99,3 +99,5 @@ func auth(username string, password string) bool {
   salt, iterations, hash := getUserAuthInfo(username)
   return verifyHash(password, salt, iterations, hash)
 }
+
+// TODO: Anonymous session support
