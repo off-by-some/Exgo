@@ -5,6 +5,7 @@ import (
     "github.com/gorilla/mux"
     sessionResource "Exgo/resources/session"
     L "Exgo/logger"
+    socketResource "Exgo/resources/socket"
 )
 
 type Route struct {
@@ -40,6 +41,12 @@ var routes = Routes{
         "POST",
         "/user",
         sessionResource.Create,
+    },
+    Route{
+      "OpenSocket",
+      "GET",
+      "/sock",
+      socketResource.Connect,
     },
 }
 
