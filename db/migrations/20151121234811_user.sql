@@ -25,7 +25,6 @@ CREATE TABLE "user" (
     password_hash bytea,
 
     -- dafaq is body?
-    body text,
     PRIMARY KEY(id)
 );
 
