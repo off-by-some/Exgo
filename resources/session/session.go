@@ -7,7 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	http "net/http"
-
+	redis "Exgo/redis"
 	sq "github.com/Masterminds/squirrel"
 )
 
@@ -23,8 +23,7 @@ type User struct {
 
 type Users []User
 
-func Create(res http.ResponseWriter, req *http.Request) {
-	// TODO(pholey): Abstract this out or find a better lib
+func unmarshalFromRequest(req *http.Request, v interface{}) {
 	body, err := ioutil.ReadAll(io.LimitReader(req.Body, 1048576))
 
 	if err != nil {
@@ -38,9 +37,14 @@ func Create(res http.ResponseWriter, req *http.Request) {
 
 	// Grab our user data
 	var user User
-	if err := json.Unmarshal(body, &user); err != nil {
+	if err := json.Unmarshal(body, &v); err != nil {
 		panic(err)
 	}
+}
+
+func Create(res http.ResponseWriter, req *http.Request) {
+	var user User
+	unmarshalFromRequest(req, &user)
 
 	// TODO(pholey): Password validation, refactoring
 	// Hash our password
@@ -69,22 +73,39 @@ func Create(res http.ResponseWriter, req *http.Request) {
 }
 
 // TODO: Handle non-existant users
-func getUserAuthInfo(username string) ([]byte, int, []byte) {
+func getUserAuthInfo(username string) (string, []byte, int, []byte) {
 	var (
+		id         string
 		salt       []byte
 		iterations int
 		hash       []byte
 	)
 	rows, _ := db.Sq.
-		Select("password_salt", "password_iterations", "password_hash").
+		Select("id", "password_salt", "password_iterations", "password_hash").
 		From("\"user\"").
 		Where(sq.Eq{"username": username}).
-		Query()
-	rows.Scan(&salt, &iterations, &hash)
-	return salt, iterations, hash
+		QueryRow()
+	rows.Scan(&id, &salt, &iterations, &hash)
+	return id, salt, iterations, hash
 }
 
-func auth(username string, password string) bool {
-	salt, iterations, hash := getUserAuthInfo(username)
-	return verifyHash(password, salt, iterations, hash)
+type Token struct {
+	token string
+}
+
+// func auth(username string, password string) bool {
+func auth(res http.ResponseWriter, req *http.Request) {
+	var user User
+	unmarshalFromRequest(req, &user)
+
+	id, salt, iterations, hash := getUserAuthInfo(user.UserName)
+	if verifyHash(password, salt, iterations, hash) {
+		token := Token(randBase64String(16))
+		redis.Client.Set(token.token, id, 0)
+
+		res.Header().Set("Content-Type", "application/json;charset=UTF-8")
+		res.WriteHeader(http.StatusCreated)
+		js, _ := json.Marshal(token)
+		res.Write(js)
+	}
 }

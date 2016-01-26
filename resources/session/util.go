@@ -6,7 +6,15 @@ import (
   pbkdf2 "golang.org/x/crypto/pbkdf2"
   sha256 "crypto/sha256"
   "bytes"
+  b64 "encoding/base64"
 )
+
+// Quick and dirty way to generate session tokens
+func randBase64String(nBytes int) string {
+  bytes := make([]byte, nBytes)
+  rand.Read(bytes)
+  return b64.StdEncoding.EncodeToString(bytes)
+}
 
 // FIXME: If the rand stuff in here fails, it
 // will probably crash the app, there is no
