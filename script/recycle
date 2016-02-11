@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-if [[ -z `psql -U postgres -h localhost -Atqc '\list distributor' postgres` ]];
+if [[ -z `psql -U postgres -h localhost -Atqc '\list exgo' postgres` ]];
 then
   echo "Existing DB not found, creating"
-  psql -c 'create database distributor;' -U postgres -h localhost
+  psql -c 'create database exgo;' -U postgres -h localhost
 else
-  psql -c 'drop database distributor;' -U postgres -h localhost
-  psql -c 'create database distributor;' -U postgres -h localhost
+  psql -c 'drop database exgo;' -U postgres -h localhost
+  psql -c 'create database exgo;' -U postgres -h localhost
 fi
 
 goose up
