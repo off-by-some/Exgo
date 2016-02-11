@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Pholey/Exgo.svg?branch=master)](https://travis-ci.org/Pholey/Exgo)
+
 Boilerplate API written in Go
 
 ## Getting started:
