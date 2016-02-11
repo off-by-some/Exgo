@@ -15,6 +15,7 @@ services:
 script:
   - ./script/test
 
+
 install:
   - ./script/bootstrap
   - ./script/recycle
