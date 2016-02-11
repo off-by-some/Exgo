@@ -1,7 +1,7 @@
 package db
 
 import (
-	"Exgo/config"
+	"github.com/Pholey/Exgo/config"
 	_ "database/sql"
 	"fmt"
 

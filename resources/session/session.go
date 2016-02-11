@@ -1,7 +1,7 @@
 package session
 
 import (
-	db "Exgo/db"
+	db "github.com/Pholey/Exgo/db"
 	json "encoding/json"
 	"io"
 	"io/ioutil"

@@ -1,8 +1,8 @@
 package resources
 
 import (
-	L "Exgo/logger"
-	sessionResource "Exgo/resources/session"
+	L "github.com/Pholey/Exgo/logger"
+	sessionResource "github.com/Pholey/Exgo/resources/session"
 	"net/http"
 
 	"github.com/gorilla/mux"
