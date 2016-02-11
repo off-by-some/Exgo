@@ -2,11 +2,11 @@ package main
 
 import (
   "log"
-  _     "Exgo/db"
-  _  "Exgo/redis"
+  _     "github.com/Pholey/Exgo/db"
+  _  "github.com/Pholey/Exgo/redis"
   http   "net/http"
-  resources "Exgo/resources"
-  // config "Exgo/config"
+  resources "github.com/Pholey/Exgo/resources"
+  // config "github.com/Pholey/Exgo/config"
 )
 
 func main() {

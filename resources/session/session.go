@@ -1,9 +1,8 @@
 package session
 
 import (
-	db "Exgo/db"
+	db "github.com/Pholey/Exgo/db"
 	json "encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	http "net/http"
@@ -57,8 +56,6 @@ func Create(res http.ResponseWriter, req *http.Request) {
 		"password_iterations", "password_salt").
 		Values(user.UserName, user.Name, user.Email, hash, iterations, salt).
 		ToSql()
-
-	fmt.Printf("%#v\n", sql)
 
 	rows, err := db.Client.Query(sql, args...)
 

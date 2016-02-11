@@ -1,31 +1,21 @@
-Just a boilerplate go application for learning purposes.. Some things may or may not be done appropriately
+[![Build Status](https://travis-ci.org/Pholey/Exgo.svg?branch=master)](https://travis-ci.org/Pholey/Exgo)
 
-### Install Deps
-[gopm](https://github.com/gpmgo/gopm):
-`$ go get -u github.com/gpmgo/gopm`
+Boilerplate API written in Go
 
-[godo](https://github.com/go-godo/godo):
-`$ go get -u gopkg.in/godo.v1/cmd/godo`
+## Getting started:
+  You will need postgres as well as redis pre-installed with no special configurations
 
-[goose](https://bitbucket.org/liamstask/goose):
-`$ go get bitbucket.org/liamstask/goose/cmd/goose`
+  Install Deps:
+  `$ ./script/bootstrap`
 
-### Bootstrap
-`godo bootstrap`
+  Provision database:
+  `$ ./script/recycle`
 
-### Run
-One command to build, run and watch
-`$ godo --watch`
+  Test it:
+  `$ ./script/test`
 
-### Migrations
-Create migration using go:
-`$ goose create ${MigrationName}`
+  Build it:
+  `$ go build`
 
-Create migration using sql:
-`$ goose create ${MigrationName} sql`
-
-Migrate up:
-`$ goose up`
-
-... And down
-`$ goose down`
+  Run it:
+  `./Exgo`
