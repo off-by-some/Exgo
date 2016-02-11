@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -e
+
+# Let go find our deps
+go get
+
+# Install goose + testing deps
+go get github.com/parnurzeal/gorequest         \
+       gopkg.in/check.v1                       \
+       bitbucket.org/liamstask/goose/cmd/goose

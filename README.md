@@ -1,31 +1,19 @@
-Just a boilerplate go application for learning purposes.. Some things may or may not be done appropriately
+Boilerplate API written in Go
 
-### Install Deps
-[gopm](https://github.com/gpmgo/gopm):
-`$ go get -u github.com/gpmgo/gopm`
+## Getting started:
+  You will need postgres as well as redis pre-installed with no special configurations
 
-[godo](https://github.com/go-godo/godo):
-`$ go get -u gopkg.in/godo.v1/cmd/godo`
+  Install Deps:
+  `$ ./script/bootstrap`
 
-[goose](https://bitbucket.org/liamstask/goose):
-`$ go get bitbucket.org/liamstask/goose/cmd/goose`
+  Provision database:
+  `$ ./script/recycle`
 
-### Bootstrap
-`godo bootstrap`
+  Test it:
+  `$ ./script/test`
 
-### Run
-One command to build, run and watch
-`$ godo --watch`
+  Build it:
+  `$ go build`
 
-### Migrations
-Create migration using go:
-`$ goose create ${MigrationName}`
-
-Create migration using sql:
-`$ goose create ${MigrationName} sql`
-
-Migrate up:
-`$ goose up`
-
-... And down
-`$ goose down`
+  Run it:
+  `./Exgo`
