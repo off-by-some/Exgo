@@ -1,9 +1,10 @@
 package resources
 
 import (
+	"net/http"
+
 	L "github.com/Pholey/Exgo/logger"
 	sessionResource "github.com/Pholey/Exgo/resources/session"
-	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -41,5 +42,11 @@ var routes = Routes{
 		"POST",
 		"/user",
 		sessionResource.Create,
+	},
+	Route{
+		"Auth",
+		"POST",
+		"/auth",
+		sessionResource.Auth,
 	},
 }

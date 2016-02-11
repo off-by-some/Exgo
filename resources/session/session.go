@@ -1,13 +1,14 @@
 package session
 
 import (
-	db "github.com/Pholey/Exgo/db"
+	redis "Exgo/redis"
 	json "encoding/json"
 	"io"
 	"io/ioutil"
 	http "net/http"
-	redis "Exgo/redis"
+
 	sq "github.com/Masterminds/squirrel"
+	db "github.com/Pholey/Exgo/db"
 )
 
 type User struct {
@@ -65,7 +66,6 @@ func Create(res http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	res.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	res.WriteHeader(http.StatusCreated)
 }
 
@@ -91,7 +91,7 @@ type Token struct {
 }
 
 // func auth(username string, password string) bool {
-func auth(res http.ResponseWriter, req *http.Request) {
+func Auth(res http.ResponseWriter, req *http.Request) {
 	var user User
 	unmarshalFromRequest(req, &user)
 
@@ -102,7 +102,12 @@ func auth(res http.ResponseWriter, req *http.Request) {
 
 		res.Header().Set("Content-Type", "application/json;charset=UTF-8")
 		res.WriteHeader(http.StatusCreated)
+
 		js, _ := json.Marshal(token)
 		res.Write(js)
 	}
+}
+
+func GetUserFromToken(token) string {
+	return redis.Client.get(token)
 }
