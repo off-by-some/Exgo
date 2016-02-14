@@ -3,6 +3,7 @@ package session
 import (
 	redis "Exgo/redis"
 	json "encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	http "net/http"
@@ -93,6 +94,7 @@ type Token struct {
 // func auth(username string, password string) bool {
 func Auth(res http.ResponseWriter, req *http.Request) {
 	var user User
+	fmt.Printf("Is Auth even getting called?\n")
 	unmarshalFromRequest(req, &user)
 
 	id, salt, iterations, hash := getUserAuthInfo(user.UserName)
