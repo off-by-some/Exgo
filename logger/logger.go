@@ -1,23 +1,25 @@
 package logger
 
 import (
-    "log"
-    "net/http"
-    "time"
+	"log"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
-func Logger(inner http.Handler, name string) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        start := time.Now()
+// Logger - Logs info about incoming requests
+func Logger(inner func(*gin.Context), name string) func(*gin.Context) {
+	return func(c *gin.Context) {
+		start := time.Now()
 
-        inner.ServeHTTP(w, r)
+		inner(c)
 
-        log.Printf(
-            "%s\t%s\t%s\t%s",
-            r.Method,
-            r.RequestURI,
-            name,
-            time.Since(start),
-        )
-    })
+		log.Printf(
+			"%s\t%s\t%s\t%s",
+			c.Request.Method,
+			c.Request.RequestURI,
+			name,
+			time.Since(start),
+		)
+	}
 }

@@ -1,15 +1,19 @@
 package session
 
 import (
-	db "github.com/Pholey/Exgo/db"
 	json "encoding/json"
 	"io"
 	"io/ioutil"
 	http "net/http"
 
+	db "github.com/Pholey/Exgo/db"
+
 	sq "github.com/Masterminds/squirrel"
+
+	"github.com/gin-gonic/gin"
 )
 
+// User - Struct for dealing with users
 type User struct {
 	Salt       []byte `db:"salt"`
 	Iterations int    `db:"password_iterations"`
@@ -20,18 +24,20 @@ type User struct {
 	Email      string `db:"email"    json:"email"`
 }
 
+// Users - Our array of users
 type Users []User
 
-func Create(res http.ResponseWriter, req *http.Request) {
+// Create - Create a user
+func Create(c *gin.Context) {
 	// TODO(pholey): Abstract this out or find a better lib
-	body, err := ioutil.ReadAll(io.LimitReader(req.Body, 1048576))
+	body, err := ioutil.ReadAll(io.LimitReader(c.Request.Body, 1048576))
 
 	if err != nil {
 		// TODO(pholey): Proper error handing
 		panic(err)
 	}
 
-	if err := req.Body.Close(); err != nil {
+	if err := c.Request.Body.Close(); err != nil {
 		panic(err)
 	}
 
@@ -61,8 +67,8 @@ func Create(res http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	res.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	res.WriteHeader(http.StatusCreated)
+	c.Writer.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	c.Writer.WriteHeader(http.StatusCreated)
 }
 
 // TODO: Handle non-existant users
